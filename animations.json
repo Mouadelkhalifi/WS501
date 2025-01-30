@@ -1,0 +1,74 @@
+{
+  "Chama": [
+    "Attack 1.png",
+    "Attack 2.png",
+    "Attack 3.png",
+    "Dead.png",
+    "Fall.png",
+    "Hurt.png",
+    "Idle.png",
+    "Jump.png",
+    "Run.png",
+    "Spear.png",
+    "Spear move.png"
+  ],
+  "Metal": [
+    "Attack 1.png",
+    "Attack 2.png",
+    "Attack 3.png",
+    "Dead.png",
+    "Defend.png",
+    "Hurt.png",
+    "Idle.png",
+    "Jump.png",
+    "Mockup_warrior.png",
+    "Protect.png",
+    "Run+Attack.png",
+    "Run.png",
+    "Walk.png"
+  ],
+  "Raijjin": [
+    "Attack 1.png",
+    "Attack 2.png",
+    "Dead.png",
+    "Fall.png",
+    "Hurt.png",
+    "Idle.png",
+    "Jump.png",
+    "Run.png"
+  ],
+  "Robb": [
+    "Attack 1.png",
+    "Attack 2.png",
+    "Attack 3.png",
+    "Dead.png",
+    "Fall.png",
+    "Hurt.png",
+    "Idle.png",
+    "Jump.png",
+    "Run.png",
+    "Take Hit - white silhouette.png"
+  ],
+  "Thorffin": [
+    "Attack1.png",
+    "Attack2.png",
+    "Attack3.png",
+    "Death.png",
+    "Going Down.png",
+    "Going Up.png",
+    "Idle.png",
+    "Run.png",
+    "Take Hit.png"
+  ],
+  "Zyrros": [
+    "Attack1.png",
+    "Attack2.png",
+    "Death.png",
+    "Fall.png",
+    "Hit.png",
+    "Idle.png",
+    "Jump.png",
+    "mockup_witcher.png",
+    "Run.png"
+  ]
+}

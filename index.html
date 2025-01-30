@@ -1,0 +1,3117 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fury - Jeu d'Arcade Multijoueur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --primary-dark: #5550cc;
+            --secondary-color: #2D3748;
+            --background-color: #F7FAFC;
+            --text-color: #1A202C;
+            --accent-color: #4FD1C5;
+            --accent-dark: #38A89D;
+            --card-bg-color: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --gradient-start: #6C63FF;
+            --gradient-end: #4FD1C5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header and Navigation */
+        header {
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px var(--shadow-color);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .container-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background-color: rgba(108, 99, 255, 0.1);
+        }
+
+        /* Hero Video Section */
+        .video-hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* Hero Section (la section qui suit) */
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 80vh;
+            background: var(--background-color);
+            padding: 6rem 2rem;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Conteneurs principaux */
+        .hero .container,
+        .video-hero .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Styles des titres */
+        .hero h1,
+        .video-hero .hero-content h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            letter-spacing: 2px;
+        }
+
+        .video-hero .hero-content h1 {
+            color: white;
+            -webkit-text-fill-color: white;
+            /* Override pour la section vidéo */
+        }
+
+        /* Styles des paragraphes */
+        .hero p,
+        .video-hero .hero-content p {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--text-color);
+        }
+
+        .video-hero .hero-content p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Boutons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Effets de fond communs */
+        .hero::before,
+        .video-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9Ii4xIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMCAyNTBjMTQ0IDk1LjcgNDMyIDk1LjcgODY0IDBzNTc2LTk1LjcgNTc2IDBWNTAwSDBWMjUweiIgZmlsbD0idXJsKCNhKSIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+');
+            opacity: 0.1;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+
+            .hero h1,
+            .video-hero .hero-content h1 {
+                font-size: 3rem;
+            }
+
+            .hero p,
+            .video-hero .hero-content p {
+                font-size: 1.2rem;
+                padding: 0 1rem;
+            }
+
+            .hero,
+            .video-hero {
+                padding: 4rem 1rem;
+            }
+        }
+
+        /* Sections */
+        .section {
+            padding: 6rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--secondary-color);
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        /* Project Info */
+        .project-info {
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 6rem;
+        }
+
+        .project-image-container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .project-image {
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.5s ease;
+        }
+
+        .project-image:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .project-type-list {
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .project-type-list li {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            color: var(--secondary-color);
+            padding: 0.5rem 1rem;
+            background-color: rgba(108, 99, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .project-type-list i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Project Details */
+        .project-details {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Progress Container */
+        .progress-container {
+            background: var(--card-bg-color);
+            padding: 2.5rem 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .progress-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        /* Progress Label */
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label span:first-child {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .progress-label span:last-child {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        /* Progress Bar */
+        .progress {
+            height: 15px;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+            position: relative;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.3),
+                    transparent);
+            transform: translateX(-100%);
+        }
+
+        .progress-bar.animate {
+            animation: shine 2s infinite;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes shine {
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Media Queries */
+        @media (max-width: 1200px) {
+            .project-info {
+                gap: 3rem;
+            }
+
+            .progress-container {
+                padding: 2rem 2.5rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .project-info {
+                grid-template-columns: 1fr;
+            }
+
+            .project-details {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .progress-container {
+                padding: 1.5rem 2rem;
+            }
+
+            .progress-label span {
+                font-size: 1.1rem;
+            }
+
+            .progress {
+                height: 12px;
+            }
+        }
+
+        /* Feature Cards */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg-color);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            padding: 1rem;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        /* Team Section - Style moderne */
+        .team {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        /* Container pour gérer l'ensemble */
+        .team-container {
+            margin-bottom: 2rem;
+        }
+
+        .team-member {
+            position: relative;
+            background: var(--card-bg-color);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            height: 400px;
+            /* Hauteur fixe pour éviter les sauts */
+        }
+
+        .team-member::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+            border-radius: 20px;
+        }
+
+        .team-member:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-member:hover::before {
+            opacity: 0.9;
+        }
+
+        .team-member-image {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 1.5rem;
+            z-index: 2;
+        }
+
+        .team-member img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--card-bg-color);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .team-member:hover img {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .team-member-content {
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            /* Espace pour les icônes sociales */
+        }
+
+        .team-member h4 {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-member p {
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover h4,
+        .team-member:hover p {
+            color: white;
+        }
+
+        /* Correction des liens sociaux */
+        .team-member-social {
+            position: absolute;
+            bottom: 2rem;
+            /* Position fixe depuis le bas */
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 2;
+            transform: translateY(20px);
+            /* Légère translation initiale */
+        }
+
+        .team-member:hover .team-member-social {
+            opacity: 1;
+            transform: translateY(0);
+            /* Retour à la position normale */
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-5px);
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* Animation au chargement */
+        .team-member {
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .team-member:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .team-member:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Media Query pour la responsivité */
+        @media (max-width: 768px) {
+            .team {
+                gap: 2rem;
+            }
+
+            .team-member-image {
+                width: 150px;
+                height: 150px;
+            }
+        }
+
+        /* News Section */
+        .news-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .news-grid::before {
+            content: '';
+            position: absolute;
+            left: 3rem;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .news-item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            margin-left: 6rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .news-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .news-item::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 2rem;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border: 4px solid var(--primary-color);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .news-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-date {
+            position: absolute;
+            left: -5.5rem;
+            top: 2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-content h5 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .news-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .news-content ul li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-color);
+        }
+
+        .news-content ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+
+        /* Styles pour le slider */
+        .news-slider {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .news-slider.active {
+            display: flex;
+        }
+
+        .carousel {
+            position: relative;
+            width: 80%;
+            max-width: 1000px;
+            overflow: hidden;
+        }
+
+        .carousel-slides {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .carousel-img {
+            max-height: 80vh;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .prev:hover, .next:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .prev {
+            left: 20px;
+        }
+
+        .next {
+            right: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .carousel {
+                width: 95%;
+            }
+
+            .prev, .next {
+                padding: 0.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to bottom, rgba(17, 17, 17, 0.95), rgba(17, 17, 17, 0.98));
+            padding: 4rem 0 2rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-bottom p {
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-links i {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-info div {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .contact-info i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .iut-logo {
+            width: 100px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            footer {
+                padding: 3rem 0 1.5rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 0 1.5rem;
+            }
+
+            .footer-section {
+                text-align: center;
+            }
+
+            .footer-section h3::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .contact-info div {
+                justify-content: center;
+            }
+
+            .footer-links a {
+                justify-content: center;
+            }
+        }
+
+        /* Animation pour les liens sociaux */
+        @keyframes socialHover {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        .social-links a:hover {
+            animation: socialHover 0.5s ease;
+        }
+
+        /* Mobile Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger div {
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 2rem;
+            }
+
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+
+            .section {
+                padding: 5rem 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--card-bg-color);
+                flex-direction: column;
+                align-items: center;
+                padding: 2rem;
+                gap: 1.5rem;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .hero {
+                padding: 6rem 0 4rem;
+            }
+
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+                padding: 0 1rem;
+            }
+
+            .project-info {
+                flex-direction: column;
+            }
+
+            .project-image-container,
+            .project-details {
+                width: 100%;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .team-member img {
+                width: 150px;
+                height: 150px;
+            }
+
+            .news-grid::before {
+                left: 1rem;
+            }
+            
+            .news-item {
+                margin-left: 3rem;
+            }
+            
+            .news-date {
+                left: -2.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .news-item::before {
+                left: -2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .feature-card {
+                padding: 1.2rem;
+            }
+
+            .team {
+                gap: 2rem;
+            }
+
+            .project-type-list {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .prev,
+            .next {
+                padding: 0.8rem;
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Apply animations to elements */
+        .section {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .feature-card,
+        .team-member,
+        .news-item {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 6px;
+            border: 3px solid var(--background-color);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Layout principal */
+        .layout-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Style fun et gaming pour le menu et le contenu */
+
+        /* Menu Sidebar */
+        .menu-sidebar {
+            background: var(--card-bg-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 2rem;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .pixel-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(108, 99, 255, 0.2);
+        }
+
+        .pixel-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .pixel-nav ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .pixel-nav ul li a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(108, 99, 255, 0.05);
+            border: 1px solid transparent;
+        }
+
+        .pixel-nav ul li a::before {
+            content: '🎮';
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .pixel-nav ul li:nth-child(2) a::before {
+            content: '📈';
+        }
+
+        .pixel-nav ul li:nth-child(3) a::before {
+            content: '📝';
+        }
+
+        .pixel-nav ul li:nth-child(4) a::before {
+            content: '📅';
+        }
+
+        .pixel-nav ul li:nth-child(5) a::before {
+            content: '🎯';
+        }
+
+        .pixel-nav ul li a:hover {
+            background: rgba(108, 99, 255, 0.1);
+            transform: translateX(10px);
+            border-color: var(--primary-color);
+        }
+
+        .pixel-nav ul li a.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+            transform: translateX(10px) scale(1.02);
+        }
+
+        /* Contenu Principal */
+        .content-card {
+            background: var(--card-bg-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .pixel-text {
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        .pixel-text h3 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .pixel-text h3::before {
+            content: '🚀';
+            margin-right: 10px;
+        }
+
+        .pixel-text ul {
+            list-style: none;
+            /* Enlève les points par défaut */
+            background: rgba(108, 99, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .pixel-text li {
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+            /* Réduit le padding pour aligner avec l'étoile */
+            position: relative;
+            display: flex;
+            /* Utilise flexbox pour l'alignement */
+            align-items: flex-start;
+            gap: 1rem;
+            /* Espace entre l'étoile et le texte */
+        }
+
+        .pixel-text li::before {
+            content: '⭐';
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+            /* Ajuste légèrement la position verticale de l'étoile */
+        }
+
+        /* Animation de transition */
+        .pixel-text {
+            opacity: 1;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pixel-text.fade-out {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .pixel-text.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Style pour les sections spéciales */
+        .pixel-text strong {
+            color: var(--primary-color);
+            font-weight: 600;
+            background: rgba(108, 99, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-sidebar {
+                position: relative;
+                top: 0;
+                margin-bottom: 2rem;
+            }
+
+            .content-card {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Actualités Sidebar */
+        .news-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .news-sidebar h2 {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .news-sidebar h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .news-card {
+            background: var(--card-bg-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .news-author {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .news-date {
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .news-content p {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Media Queries */
+        @media (max-width: 1200px) {
+            .layout-container {
+                grid-template-columns: 200px 1fr 250px;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .layout-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .menu-sidebar,
+            .news-sidebar {
+                position: static;
+            }
+        }
+
+        /* Attract Mode Video Section */
+        .attract-mode {
+            position: relative;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            overflow: hidden;
+        }
+
+        .attract-mode::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9Ii4xIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMCAyNTBjMTQ0IDk1LjcgNDMyIDk1LjcgODY0IDBzNTc2LTk1LjcgNTc2IDBWNTAwSDBWMjUweiIgZmlsbD0idXJsKCNhKSIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+');
+            opacity: 0.1;
+        }
+
+        .video-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            transform: perspective(1000px) rotateX(5deg);
+            transition: all 0.5s ease;
+        }
+
+        .video-container:hover {
+            transform: perspective(1000px) rotateX(0deg);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe,
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg,
+                    rgba(108, 99, 255, 0.2),
+                    rgba(79, 209, 197, 0.2));
+            pointer-events: none;
+        }
+
+        .video-title {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .video-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-title p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Animation des particules */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(100vw);
+                opacity: 0;
+            }
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .video-container {
+                transform: none;
+                margin: 0 1rem;
+            }
+
+            .video-title h2 {
+                font-size: 2rem;
+            }
+
+            .video-title p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+        }
+
+        /* Indicateur de clic subtil */
+        .team-member {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .team-member::after {
+            content: '';
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover::after {
+            opacity: 1;
+            animation: pulseWidth 1.5s infinite;
+        }
+
+        @keyframes pulseWidth {
+
+            0%,
+            100% {
+                width: 30px;
+                opacity: 0.5;
+            }
+
+            50% {
+                width: 40px;
+                opacity: 1;
+            }
+        }
+
+        /* Sous-div des détails */
+        .member-details-panel {
+            background: var(--card-bg-color);
+            border-radius: 20px;
+            margin-top: 1rem;
+            padding: 0;
+            height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .team-container.active .member-details-panel {
+            padding: 2rem;
+            height: auto;
+            opacity: 1;
+        }
+
+        /* Style des contributions */
+        .details-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+
+        .details-content li {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(108, 99, 255, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .details-content li i {
+            color: var(--primary-color);
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Styles pour le contenu dynamique */
+        .pixel-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .pixel-text h3 {
+            color: var(--primary-color);
+            margin: 2rem 0 1rem;
+            font-size: 1.2rem;
+        }
+
+        .pixel-text ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .pixel-text li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .pixel-text p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        /* Footer Styles */
+        .game-footer {
+            position: relative;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            padding: 4rem 2rem 2rem;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Waves Animation */
+        .footer-waves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .wave {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path></svg>');
+            background-size: 1200px 100px;
+            animation: wave 18s linear infinite;
+            opacity: 0.1;
+        }
+
+        #wave1 {
+            z-index: 5;
+            opacity: 0.2;
+            animation: moveWave1 3s ease-in-out infinite alternate;
+        }
+
+        #wave2 {
+            z-index: 4;
+            opacity: 0.15;
+            animation: moveWave2 5s ease-in-out infinite alternate;
+        }
+
+        #wave3 {
+            z-index: 3;
+            opacity: 0.1;
+            animation: moveWave3 7s ease-in-out infinite alternate;
+        }
+
+        #wave4 {
+            z-index: 2;
+            opacity: 0.05;
+            animation: moveWave4 9s ease-in-out infinite alternate;
+        }
+
+        @keyframes moveWave1 {
+            from {
+                transform: translateX(-50px);
+            }
+
+            to {
+                transform: translateX(50px);
+            }
+        }
+
+        @keyframes moveWave2 {
+            from {
+                transform: translateX(-40px);
+            }
+
+            to {
+                transform: translateX(40px);
+            }
+        }
+
+        @keyframes moveWave3 {
+            from {
+                transform: translateX(-30px);
+            }
+
+            to {
+                transform: translateX(30px);
+            }
+        }
+
+        @keyframes moveWave4 {
+            from {
+                transform: translateX(-20px);
+            }
+
+            to {
+                transform: translateX(20px);
+            }
+        }
+
+        /* Footer Content */
+        .footer-content {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-section a:hover {
+            transform: translateX(5px);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .legal-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .legal-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Styles pour la section À propos */
+        .project-info {
+            margin-bottom: 3rem;
+        }
+
+        .progress-container {
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg,
+                    rgba(255, 255, 255, 0.2) 25%,
+                    transparent 25%,
+                    transparent 50%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    rgba(255, 255, 255, 0.2) 75%,
+                    transparent 75%,
+                    transparent);
+            background-size: 20px 20px;
+            animation: moveStripes 1s linear infinite;
+        }
+
+        @keyframes moveStripes {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 20px 0;
+            }
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg-color);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(108, 99, 255, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            color: var(--text-color);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: var(--text-color);
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Styles pour la carte et l'animation */
+        .location-section {
+            margin-top: 4rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            position: relative;
+        }
+
+        .map-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(108, 99, 255, 0.2), rgba(255, 255, 255, 0.1));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 450px;
+            transition: all 0.3s ease;
+        }
+
+        .map-container:hover iframe {
+            transform: scale(1.02);
+        }
+
+        .location-info {
+            background: var(--card-bg-color);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            text-align: center;
+        }
+
+        .location-info h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .location-info p {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Animation au scroll */
+        .location-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .location-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-container {
+                padding: 1rem;
+            }
+            
+            .location-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Style pour la section progress */
+        .progress-section {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .gameplay-image {
+            flex: 1;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .gameplay-preview {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .game-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .game-info span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+        }
+
+        .game-info i {
+            color: var(--primary-color);
+        }
+
+        .progress-bars {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        /* Styles des barres de progression animées */
+        .progress-container {
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 20px 20px;
+            animation: moveStripes 1s linear infinite;
+        }
+
+        @keyframes moveStripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .progress-section {
+                flex-direction: column;
+            }
+            
+            .gameplay-image {
+                height: 200px;
+            }
+            
+            .progress-bars {
+                padding: 1.5rem;
+            }
+        }
+        .iut-logo {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="container-nav">
+            <a href="#" class="logo">Fury 🎮</a>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#about">À propos 🎯</a></li>
+                <li><a href="#team">Équipe 👥</a></li>
+                <li><a href="#news">Actualités 📢</a></li>
+            </ul>
+        </nav>
+
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Fury 🎮</h1>
+                <p>Un jeu d'arcade multijoueur basé sur des duels rapides de 60 secondes ⚡, mettant en scène des
+                    personnages emblématiques dans des environnements variés.</p>
+                <a href="https://docs.google.com/document/d/1G30aJ1riKAQ3T_k4rhWYDY4P2k9R-ypblSDhw5NDAzU/edit"
+                    class="btn" target="_blank">En savoir plus 🚀</a>
+            </div>
+        </section>
+
+
+        <section class="attract-mode">
+            <div class="particles">
+                <!-- Les particules seront ajoutées en JS -->
+            </div>
+
+            <div class="video-title">
+                <h2>Découvrez Fury en Action 🎬</h2>
+                <p>Plongez dans l'univers captivant de notre jeu d'arcade multijoueur ✨</p>
+            </div>
+
+            <div class="video-container">
+                <div class="video-wrapper">
+                    <iframe src="images/attract.mp4" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                    <div class="video-overlay"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section">
+            <div class="container">
+                <h2 class="section-title">À propos du projet 🎯</h2>
+                <div class="project-info">
+                    <div class="progress-section">
+                        <div class="gameplay-image">
+                            <img src="images/image1.png" alt="Gameplay Fury" class="gameplay-preview">
+                            <div class="game-info">
+                                <span><i class="fas fa-gamepad"></i> Jeu de plateforme</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Bordeaux, France</span>
+                            </div>
+                        </div>
+                        <div class="progress-bars">
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Avancée du projet 📈</span>
+                                    <span>95%</span>
+                                </div>
+                                <div class="progress-bar" style="width: 95%"></div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Avancée du temps ⏳</span>
+                                    <span>90%</span>
+                                </div>
+                                <div class="progress-bar" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="features">
+                        <div class="feature-card">
+                            <i class="fas fa-gamepad feature-icon"></i>
+                            <h3>Mode Combat (1v1) ⚔️</h3>
+                            <p>Duels rapides de 60 secondes entre deux joueurs.</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-user-ninja feature-icon"></i>
+                            <h3>Mode Aventure solo 🎯</h3>
+                            <p>Progression à travers des niveaux variés contre des adversaires IA.</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-users feature-icon"></i>
+                            <h3>Personnages uniques ✨</h3>
+                            <p>Jouez avec une sélection de combattants aux capacités spéciales.</p>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+        </section>
+
+        <section id="team" class="section">
+            <div class="container">
+                <h2 class="section-title">Notre équipe 👥</h2>
+                <div class="team">
+                    <div class="team-container">
+                        <!-- Team member card -->
+                        <div class="team-member">
+                            <div class="team-member-image">
+                                <img src="images/adem.png" alt="Adem BEN KHEDHER">
+                            </div>
+                            <div class="team-member-content">
+                                <h4>Adem BEN KHEDHER</h4>
+                                <p>Développeur</p>
+                            </div>
+                            <div class="team-member-social">
+                                <a href="https://github.com/AdemBenKhedher" class="social-link">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/in/adem-benkhedher/" class="social-link">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Details panel (séparé) -->
+                        <div class="member-details-panel">
+                            <div class="details-content">
+                                <h5>Contributions au Projet</h5>
+                                <ul>
+                                    <li>
+                                        <i class="fas fa-code"></i>
+                                        <span>Développement du système de combat en réseau</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-network-wired"></i>
+                                        <span>Implémentation du mode multijoueur</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-bug"></i>
+                                        <span>Tests et débogage du système de combat</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-server"></i>
+                                        <span>Configuration du serveur de jeu</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="team-container">
+                        <!-- Team member card -->
+                        <div class="team-member">
+                            <div class="team-member-image">
+                                <img src="images/MOI.jpg" alt="Mouad EL KHALIFI" style="object-position: top center;">
+                            </div>
+                            <div class="team-member-content">
+                                <h4>Mouad EL KHALIFI</h4>
+                                <p>Développeur jeu & kickstarter</p>
+                            </div>
+                            <div class="team-member-social">
+                                <a href="https://github.com/MouadElKhalifi" class="social-link">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/in/mouad-elkhalifi/" class="social-link">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Details panel (séparé) -->
+                        <div class="member-details-panel">
+                            <div class="details-content">
+                                <h5>Contributions au Projet</h5>
+                                <ul>
+                                    <li>
+                                        <i class="fas fa-gamepad"></i>
+                                        <span>Game Design et équilibrage des personnages</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-code"></i>
+                                        <span>Développement du système de combat solo</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-tasks"></i>
+                                        <span>Gestion du projet et coordination de l'équipe</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-pencil-ruler"></i>
+                                        <span>Design des niveaux et des environnements</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-rocket"></i>
+                                        <span>Lancement et gestion de la campagne Kickstarter</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="team-container">
+                        <!-- Team member card -->
+                        <div class="team-member">
+                            <div class="team-member-image">
+                                <img src="images/othmane.jpeg" alt="Othmane HOUASLI">
+                            </div>
+                            <div class="team-member-content">
+                                <h4>Othmane HOUASLI</h4>
+                                <p>Développeur/Designer</p>
+                            </div>
+                            <div class="team-member-social">
+                                <a href="https://github.com/othmanehsl" class="social-link">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/in/othmane-houasli/" class="social-link">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Details panel (séparé) -->
+                        <div class="member-details-panel">
+                            <div class="details-content">
+                                <h5>Contributions au Projet</h5>
+                                <ul>
+                                    <li>
+                                        <i class="fas fa-film"></i>
+                                        <span>Création de l'Attract Mode et montage vidéo</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-paint-brush"></i>
+                                        <span>Design des personnages et des animations</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-palette"></i>
+                                        <span>Direction artistique et charte graphique</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-video"></i>
+                                        <span>Montage et effets visuels de la vidéo de présentation</span>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-desktop"></i>
+                                        <span>Interface utilisateur et menus du jeu</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="news" class="section">
+            <div class="container">
+                <h2 class="section-title">Développement du Projet 📢</h2>
+                <div class="news-grid">
+                    <!-- Février 2025 -->
+                    <div class="news-item" onclick="showSlider(0)">
+                        <img src="images/final-version.png" alt="Version Finale" class="news-img">
+                        <div class="news-date">15/02/2025</div>
+                        <div class="news-content">
+                            <h5>Version 1.0.0 déployée sur la borne MMI 🎮</h5>
+                            <ul>
+                                <li>Déploiement final sur la borne d'arcade</li>
+                                <li>Tous les personnages sont jouables</li>
+                                <li>Mode 1v1 pleinement fonctionnel</li>
+                                <li>Correction des derniers bugs de combat</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Slider Version Finale -->
+                    <div class="news-slider" id="slider-0">
+                        <div class="carousel">
+                            <button class="prev" onclick="prevSlide(0)">&#10094;</button>
+                            <div class="carousel-slides" id="carousel-slides-0">
+                                <div class="carousel-item">
+                                    <img src="images/Chama.png" alt="Chama" class="carousel-img">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="images/Metal.png" alt="Metal" class="carousel-img">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="images/Raijjin.png" alt="Raijjin" class="carousel-img">
+                                </div>
+                            </div>
+                            <button class="next" onclick="nextSlide(0)">&#10095;</button>
+                        </div>
+                    </div>
+
+                    <!-- Janvier 2025 -->
+                    <div class="news-item" onclick="showSlider(1)">
+                        <img src="images/combat-system.jpg" alt="Système de Combat" class="news-img">
+                        <div class="news-date">20/01/2025</div>
+                        <div class="news-content">
+                            <h5>Finalisation du système de combat ⚔️</h5>
+                            <ul>
+                                <li>Équilibrage final des personnages</li>
+                                <li>Optimisation des hitboxes</li>
+                                <li>Ajout des effets sonores de combat</li>
+                                <li>Intégration des combos spéciaux</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Décembre 2024 -->
+                    <div class="news-item">
+                        <div class="news-date">15/12/2024</div>
+                        <div class="news-content">
+                            <h5>Amélioration du Gameplay 🎯</h5>
+                            <ul>
+                                <li>Ajustement de la vitesse des personnages</li>
+                                <li>Amélioration des animations de combat</li>
+                                <li>Optimisation des collisions</li>
+                                <li>Tests et corrections des bugs majeurs</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Novembre 2024 -->
+                    <div class="news-item">
+                        <div class="news-date">15/11/2024</div>
+                        <div class="news-content">
+                            <h5>Interface et Assets 🎨</h5>
+                            <ul>
+                                <li>Création des miniatures des personnages</li>
+                                <li>Finalisation du style visuel du jeu</li>
+                                <li>Amélioration du HUD en combat</li>
+                                <li>Intégration des effets visuels de feedback</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Octobre 2024 -->
+                    <div class="news-item">
+                        <div class="news-date">20/10/2024</div>
+                        <div class="news-content">
+                            <h5>Développement du Mode Combat 🥊</h5>
+                            <ul>
+                                <li>Implémentation du système de vie</li>
+                                <li>Création du terrain de combat</li>
+                                <li>Ajout du système de timer</li>
+                                <li>Développement des mouvements de base</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Septembre 2024 -->
+                    <div class="news-item">
+                        <div class="news-date">20/09/2024</div>
+                        <div class="news-content">
+                            <h5>Début du développement 🚀</h5>
+                            <ul>
+                                <li>Conception des premiers personnages</li>
+                                <li>Création des animations de base</li>
+                                <li>Mise en place de l'architecture du jeu</li>
+                                <li>Configuration initiale de Unity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="layout-container">
+            <!-- Menu Gauche -->
+            <div class="menu-sidebar">
+                <h2 class="pixel-title">MENU</h2>
+                <nav class="pixel-nav">
+                    <ul>
+                        <li><a href="#description">DESCRIPTION DU PROJET</a></li>
+                        <li><a href="#avancee">AVANCÉE DU PROJET</a></li>
+                        <li><a href="#note">NOTE DE CADRAGE</a></li>
+                        <li><a href="#phasage">PHASAGE / PLANNING</a></li>
+                        <li><a href="#etat">ÉTAT DE L'ART DU DOMAINE</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Section Centrale -->
+            <div class="main-content">
+                <div class="content-card">
+                    <h2 class="pixel-title" id="content-title">DESCRIPTION DU PROJET</h2>
+                    <div class="pixel-text" id="content-text">
+                        <!-- Le contenu initial sera la description -->
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </main>
+
+    <footer class="game-footer">
+        <div class="footer-waves">
+            <div class="wave" id="wave1"></div>
+            <div class="wave" id="wave2"></div>
+            <div class="wave" id="wave3"></div>
+            <div class="wave" id="wave4"></div>
+        </div>
+
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Fury Project 🎮</h3>
+                <p>Un jeu d'arcade multijoueur épique ! ⚡</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Liens Rapides 🚀</h3>
+                <ul>
+                    <li><a href="#about">À propos</a></li>
+                    <li><a href="#team">Notre équipe</a></li>
+                    <li><a href="#news">Actualités</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact 📧</h3>
+                <p>MMI Troyes</p>
+                <img src="images/iut.png" alt="Logo IUT" class="iut-logo">
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2024 Fury Project - Tous droits réservés ✨</p>
+            <a href="#" class="legal-link">Mentions légales 📜</a>
+        </div>
+    </footer>
+
+    <script>
+        // Fonction pour récupérer la liste des animations depuis un fichier JSON
+        async function getAnimationsList() {
+            try {
+                const response = await fetch('animations.json');
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des animations');
+                }
+                const data = await response.json();
+                console.log(data);  // Affichez les animations dans la console pour vérifier
+                return data;
+            } catch (error) {
+                console.error('Erreur:', error);
+                return {};
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const animations = await getAnimationsList();
+            console.log(animations); // Voir le contenu dans la console
+        });
+
+        // Fonction pour afficher les animations d'un personnage
+        async function showAnimations(characterName) {
+            const animationsContainer = document.getElementById('animations-container');
+            animationsContainer.innerHTML = ''; // Réinitialiser le contenu précédent
+
+            // Ajouter un titre avec le nom du personnage
+            const title = document.createElement('h3');
+            title.innerText = `${characterName} Animations`;
+            animationsContainer.appendChild(title);
+
+            // Créer un conteneur pour les animations
+            const animationsGrid = document.createElement('div');
+            animationsGrid.classList.add('animations-grid');
+
+            // Récupérer la liste des animations depuis le fichier JSON
+            const animationsList = await getAnimationsList();
+
+            // Vérifier si le personnage a des animations définies
+            if (animationsList[characterName]) {
+                animationsList[characterName].forEach(animation => {
+                    const animationDiv = document.createElement('div');
+                    animationDiv.classList.add('animation-item');
+
+                    // Créer une image avec l'animation
+                    const img = document.createElement('img');
+                    img.src = `images/${characterName}/animations/${animation}`; // Chemin vers l'image d'animation
+                    img.alt = `${characterName} ${animation}`;
+                    img.classList.add('animation-img');
+
+                    // Ajouter une légende sous l'image (nom du fichier sans l'extension)
+                    const caption = document.createElement('p');
+                    caption.innerText = animation.split('.')[0]; // Enlever l'extension pour afficher le nom simple
+
+                    animationDiv.appendChild(img);
+                    animationDiv.appendChild(caption);
+
+                    animationsGrid.appendChild(animationDiv);
+                });
+            } else {
+                // Message si aucun fichier d'animation n'est trouvé pour ce personnage
+                const noAnimationMessage = document.createElement('p');
+                noAnimationMessage.innerText = `Aucune animation trouvée pour ${characterName}.`;
+                animationsContainer.appendChild(noAnimationMessage);
+            }
+
+            animationsContainer.appendChild(animationsGrid);
+        }
+
+        // Exemple d'initialisation du carrousel avec un clic sur un personnage
+        function initCharacterCarousel() {
+            const characters = ['Chama', 'Metal', 'Raijjin', 'Robb', 'Thorffin', 'Zyrros'];
+            const carousel = document.getElementById('carousel-slides-0');
+            carousel.innerHTML = ''; // Vider le carrousel existant
+
+            characters.forEach(character => {
+                const slide = document.createElement('div');
+                slide.classList.add('carousel-item');
+
+                const img = document.createElement('img');
+                img.src = `images/${character.toLowerCase()}.png`; // Image principale du personnage
+                img.alt = character;
+                img.classList.add('carousel-img');
+                img.onclick = () => showAnimations(character); // Afficher les animations au clic
+
+                slide.appendChild(img);
+                carousel.appendChild(slide);
+            });
+        }
+
+        // Appel de la fonction au chargement de la page
+        document.addEventListener('DOMContentLoaded', initCharacterCarousel);
+
+        // Variables pour le slider
+        let currentSlide = [0, 0, 0, 0, 0, 0]; // Un index pour chaque mois
+
+        function showSlider(index) {
+            const slider = document.getElementById(`slider-${index}`);
+            if (slider) {
+                slider.classList.toggle('active');
+                currentSlide[index] = 0;
+                updateSlidePosition(index);
+            }
+        }
+
+        function prevSlide(index) {
+            const slides = document.querySelectorAll(`#carousel-slides-${index} .carousel-item`);
+            currentSlide[index]--;
+            if (currentSlide[index] < 0) {
+                currentSlide[index] = slides.length - 1;
+            }
+            updateSlidePosition(index);
+        }
+
+        function nextSlide(index) {
+            const slides = document.querySelectorAll(`#carousel-slides-${index} .carousel-item`);
+            currentSlide[index]++;
+            if (currentSlide[index] >= slides.length) {
+                currentSlide[index] = 0;
+            }
+            updateSlidePosition(index);
+        }
+
+        function updateSlidePosition(index) {
+            const slidesContainer = document.getElementById(`carousel-slides-${index}`);
+            if (slidesContainer) {
+                const slideWidth = slidesContainer.clientWidth;
+                slidesContainer.style.transform = `translateX(${-currentSlide[index] * slideWidth}px)`;
+            }
+        }
+
+        // Fermer le slider en cliquant en dehors
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('news-slider')) {
+                event.target.classList.remove('active');
+            }
+        });
+
+        // Navigation au clavier
+        document.addEventListener('keydown', function(event) {
+            const activeSlider = document.querySelector('.news-slider.active');
+            if (activeSlider) {
+                const index = activeSlider.id.split('-')[1];
+                if (event.key === 'ArrowLeft') {
+                    prevSlide(index);
+                } else if (event.key === 'ArrowRight') {
+                    nextSlide(index);
+                } else if (event.key === 'Escape') {
+                    activeSlider.classList.remove('active');
+                }
+            }
+        });
+
+        // Observer la section "news" pour détecter des changements et mettre à jour la date
+        function observeNewsSection() {
+            const newsSection = document.getElementById('news');
+            const observer = new MutationObserver(() => {
+                const currentDate = new Date();
+                const formattedDate = currentDate.toLocaleDateString('fr-FR', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
+                const formattedTime = currentDate.toLocaleTimeString('fr-FR');
+                document.getElementById('edit-date').innerHTML = `Dernière édition du code : ${formattedDate}, à ${formattedTime}`;
+                newsSection.setAttribute('data-modified', 'true'); // Marquer comme modifié
+            });
+
+            observer.observe(newsSection, {
+                childList: true,
+                subtree: true
+            });
+        }
+
+        // Initialisation du menu burger
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
+
+            hamburger.addEventListener('click', function () {
+                navLinks.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+        });
+
+        // Fonction pour gérer le carrousel d'images (ajustement du code pour éviter les doublons)
+        function showSlide(sliderIndex, n) {
+            const slider = document.getElementById(`carousel-slides-${sliderIndex}`);
+            const slides = slider.querySelectorAll('.carousel-item');
+            currentSlide[sliderIndex] += n;
+
+            // Si l'utilisateur dépasse le nombre d'images, revenir au début
+            if (currentSlide[sliderIndex] >= slides.length) {
+                currentSlide[sliderIndex] = 0;
+            }
+
+            // Si l'utilisateur clique pour revenir en arrière depuis la première image
+            if (currentSlide[sliderIndex] < 0) {
+                currentSlide[sliderIndex] = slides.length - 1;
+            }
+
+            // Ajuster la position des slides
+            slider.style.transform = `translateX(${-currentSlide[sliderIndex] * 100}%)`;
+        }
+
+        function prevSlide(sliderIndex) {
+            showSlide(sliderIndex, -1);
+        }
+
+        function nextSlide(sliderIndex) {
+            showSlide(sliderIndex, 1);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const progressBar = entry.target;
+                        const percentage = progressBar.parentElement.previousElementSibling.querySelector('span:last-child').textContent;
+
+                        // Ajoute la classe animate
+                        progressBar.classList.add('animate');
+
+                        // Définit la largeur finale
+                        setTimeout(() => {
+                            progressBar.style.width = percentage;
+                        }, 100);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            // Observer chaque barre de progression
+            document.querySelectorAll('.progress-bar').forEach(bar => {
+                observer.observe(bar);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const teamContainers = document.querySelectorAll('.team-container');
+
+            teamContainers.forEach(container => {
+                const memberCard = container.querySelector('.team-member');
+
+                memberCard.addEventListener('click', function () {
+                    const wasActive = container.classList.contains('active');
+
+                    // Ferme tous les containers actifs
+                    document.querySelectorAll('.team-container.active').forEach(activeContainer => {
+                        if (activeContainer !== container) {
+                            activeContainer.classList.remove('active');
+                        }
+                    });
+
+                    // Toggle l'état du container cliqué
+                    if (!wasActive) {
+                        container.classList.add('active');
+                        setTimeout(() => {
+                            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 300);
+                    } else {
+                        container.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        const menuContents = {
+            'description': {
+                title: 'DESCRIPTION DU PROJET',
+                content: `
+                <p>Fury est un jeu d'arcade multijoueur immersif et compétitif, conçu pour offrir des duels rapides de 60 secondes. Ce projet innovant combine l'esprit des jeux d'arcade classiques avec des mécaniques de combat modernes.</p>
+                
+                <p>Le jeu met en scène des personnages uniques, chacun doté de capacités spéciales distinctes, s'affrontant dans des arènes dynamiques. Les combats sont intenses et stratégiques, nécessitant à la fois réflexes et planification tactique.</p>
+                
+                <p>Développé avec le moteur Godot, Fury propose deux modes de jeu principaux :</p>
+                <ul>
+                    <li>Mode Combat 1v1 : Des duels rapides entre deux joueurs</li>
+                    <li>Mode Aventure Solo : Une progression à travers différents niveaux contre des adversaires IA</li>
+                </ul>
+                
+                <p>L'objectif est de créer une expérience de jeu accessible mais profonde, où chaque match est une opportunité d'améliorer ses compétences et de découvrir de nouvelles stratégies.</p>
+            `
+            },
+            'avancee': {
+                title: 'AVANCÉE DU PROJET',
+                content: `
+                <p>État actuel du développement (95% complété) :</p>
+                
+                <h3>Éléments Terminés :</h3>
+                <ul>
+                    <li>Système de combat de base</li>
+                    <li>Animations des personnages</li>
+                    <li>Design des niveaux</li>
+                    <li>Interface utilisateur</li>
+                    <li>Mode multijoueur local</li>
+                </ul>
+                
+                <h3>En Cours de Finalisation :</h3>
+                <ul>
+                    <li>Tests de balance des personnages</li>
+                    <li>Optimisation des performances</li>
+                    <li>Correction des derniers bugs</li>
+                </ul>
+                
+                <p>Le projet est en phase finale de développement, avec une sortie prévue très prochainement.</p>
+            `
+            },
+            'note': {
+                title: 'NOTE DE CADRAGE',
+                content: `
+                <h3>Objectifs du Projet :</h3>
+                <p>Créer un jeu d'arcade multijoueur compétitif et accessible, mettant l'accent sur des combats rapides et stratégiques.</p>
+                
+                <h3>Public Cible :</h3>
+                <ul>
+                    <li>Joueurs casual appréciant les jeux d'arcade</li>
+                    <li>Amateurs de jeux de combat</li>
+                    <li>Joueurs compétitifs cherchant des parties rapides</li>
+                </ul>
+                
+                <h3>Contraintes Techniques :</h3>
+                <ul>
+                    <li>Développement sous Godot Engine</li>
+                    <li>Optimisation pour la borne d'arcade MMI</li>
+                    <li>Performance fluide à 60 FPS</li>
+                </ul>
+                
+                <h3>Ressources :</h3>
+                <p>Équipe de 3 développeurs, budget Kickstarter, matériel de développement fourni par l'IUT.</p>
+            `
+            },
+            'phasage': {
+                title: 'PHASAGE / PLANNING',
+                content: `
+                <h3>Phase 1 : Conception (Complétée)</h3>
+                <ul>
+                    <li>Game design document</li>
+                    <li>Conception des personnages</li>
+                    <li>Architecture technique</li>
+                </ul>
+                
+                <h3>Phase 2 : Développement (Complétée)</h3>
+                <ul>
+                    <li>Système de combat</li>
+                    <li>Animations et graphismes</li>
+                    <li>Interface utilisateur</li>
+                </ul>
+                
+                <h3>Phase 3 : Tests et Optimisation (En cours)</h3>
+                <ul>
+                    <li>Tests de gameplay</li>
+                    <li>Équilibrage</li>
+                    <li>Optimisation des performances</li>
+                </ul>
+                
+                <h3>Phase 4 : Lancement (À venir)</h3>
+                <ul>
+                    <li>Déploiement sur la borne d'arcade</li>
+                    <li>Documentation finale</li>
+                    <li>Présentation du projet</li>
+                </ul>
+            `
+            },
+            'etat': {
+                title: 'ÉTAT DE L\'ART DU DOMAINE',
+                content: `
+                <h3>Analyse des Jeux de Référence :</h3>
+                <p>Notre projet s'inspire de plusieurs jeux emblématiques tout en apportant sa propre innovation :</p>
+                
+                <ul>
+                    <li><strong>Street Fighter :</strong> Pour son système de combat technique et précis</li>
+                    <li><strong>Super Smash Bros :</strong> Pour l'accessibilité et le fun immédiat</li>
+                    <li><strong>Mortal Kombat :</strong> Pour le rythme des combats et les finishers</li>
+                </ul>
+                
+                <h3>Innovations Apportées :</h3>
+                <ul>
+                    <li>Système de combat simplifié mais profond</li>
+                    <li>Matches courts de 60 secondes</li>
+                    <li>Capacités uniques par personnage</li>
+                    <li>Mode histoire original</li>
+                </ul>
+                
+                <p>Fury se distingue par sa volonté de rendre les jeux de combat plus accessibles tout en maintenant une profondeur stratégique satisfaisante.</p>
+            `
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuItems = document.querySelectorAll('.pixel-nav ul li a');
+            const contentTitle = document.getElementById('content-title');
+            const contentText = document.getElementById('content-text');
+
+            // Afficher le contenu initial
+            contentText.innerHTML = menuContents['description'].content;
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('href').replace('#', '');
+
+                    // Mettre à jour le contenu
+                    contentTitle.textContent = menuContents[section].title;
+                    contentText.innerHTML = menuContents[section].content;
+
+                    // Animation de transition
+                    contentText.style.opacity = '0';
+                    setTimeout(() => {
+                        contentText.style.opacity = '1';
+                    }, 300);
+                });
+            });
+        });
+
+        // Animation au scroll pour la section localisation
+        document.addEventListener('DOMContentLoaded', function() {
+            const locationSection = document.querySelector('.location-section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            observer.observe(locationSection);
+        });
+    </script>
+
+
+
+</body>
+
+</html>
