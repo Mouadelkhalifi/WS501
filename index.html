@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #6C63FF;
@@ -21,6 +22,14 @@
             --shadow-color: rgba(0, 0, 0, 0.1);
             --gradient-start: #6C63FF;
             --gradient-end: #4FD1C5;
+            --max-width: 1200px;
+            --border-radius: 20px;
+            --border-color: rgba(108, 99, 255, 0.2);
+            --background-secondary: rgba(255, 255, 255, 0.9);
+            --background-tertiary: rgba(255, 255, 255, 0.8);
+            --background-hover: rgba(108, 99, 255, 0.1);
+            --primary-color-rgb: 108, 99, 255;
+            --border-color-hover: rgba(108, 99, 255, 0.4);
         }
 
         * {
@@ -655,48 +664,318 @@
         .news-grid {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 3rem;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 2rem 2rem 2rem 8rem;
+            perspective: 2000px;
             position: relative;
-            padding: 2rem;
         }
 
+        /* Ligne de timeline */
         .news-grid::before {
             content: '';
             position: absolute;
-            left: 3rem;
+            left: 4rem;
             top: 0;
             height: 100%;
             width: 4px;
-            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
-            border-radius: 2px;
+            background: linear-gradient(to bottom,
+                var(--primary-color),
+                var(--accent-color)
+            );
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.2);
+        }
+
+        /* Style des dates amélioré */
+        .news-date {
+            position: absolute;
+            left: -12.5rem;
+            top: 2.5rem;
+            background: var(--background-secondary);
+            padding: 0.8rem 1.2rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--border-color);
+            transform: translateZ(30px);
+            animation: floatDate 3s ease-in-out infinite;
+            font-weight: 500;
+            z-index: 2;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Point de timeline */
+        .news-item::before {
+            content: '';
+            position: absolute;
+            left: -4.5rem;
+            top: 3rem;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-color);
+            border: 3px solid var(--background-secondary);
+            border-radius: 50%;
+            backdrop-filter: blur(5px);
+            animation: pulsePoint 2s infinite;
+            z-index: 1;
+            box-shadow: 0 0 15px rgba(var(--primary-color-rgb), 0.3);
+        }
+
+        /* Ligne connectant le point à la carte */
+        .news-item::after {
+            content: '';
+            position: absolute;
+            left: -3.5rem;
+            top: 3.5rem;
+            width: 3rem;
+            height: 2px;
+            background: linear-gradient(
+                to right,
+                var(--primary-color),
+                var(--background-secondary)
+            );
+            transform-origin: left;
+            animation: expandLine 0.5s ease-out forwards;
+        }
+
+        /* Animations ajustées */
+        @keyframes floatDate {
+            0%, 100% { 
+                transform: translateZ(30px) translateY(0);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+            50% { 
+                transform: translateZ(30px) translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            }
+        }
+
+        @keyframes pulsePoint {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(var(--primary-color-rgb), 0.3);
+            }
+            50% { 
+                transform: scale(1.2);
+                box-shadow: 0 0 0 10px rgba(var(--primary-color-rgb), 0);
+            }
+        }
+
+        /* Hover effects */
+        .news-item:hover::before {
+            background: var(--accent-color);
+            transform: scale(1.3);
+            border-color: var(--background-secondary);
+        }
+
+        .news-item:hover .news-date {
+            background: var(--background-hover);
+            transform: translateZ(50px) scale(1.05);
+            border-color: var(--border-color-hover);
+        }
+
+        /* Responsive amélioré */
+        @media (max-width: 768px) {
+            .news-grid {
+                padding: 1.5rem 1.5rem 1.5rem 5rem;
+            }
+
+            .news-grid::before {
+                left: 2.5rem;
+            }
+
+            .news-item::before {
+                left: -3rem;
+                top: 2.5rem;
+            }
+
+            .news-item::after {
+                left: -2rem;
+                width: 2rem;
+            }
+
+            .news-date {
+                left: -4.5rem;
+                top: 2rem;
+                padding: 0.5rem;
+                min-width: auto;
+                writing-mode: horizontal-tb;
+                transform: none;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
         }
 
         .news-item {
             position: relative;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            overflow: hidden;
-            cursor: pointer;
-            margin-left: 6rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.05),
+                rgba(255, 255, 255, 0.15)
+            );
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.1),
+                inset 0 0 30px rgba(255, 255, 255, 0.05);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            animation: floatCard 5s ease-in-out infinite;
+            overflow:visible;
         }
 
-        .news-item:hover {
-            transform: translateY(-5px);
+        .news-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            transform-style: preserve-3d;
+            position: relative;
         }
 
-        .news-item::before {
+        .team-badge {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1rem 2rem;
+            background:#5550cc;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.1),
+                inset 0 0 20px rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pulseBadge 3s infinite;
+            transform: translateZ(50px);
+        }
+
+        .team-badge::after {
             content: '';
             position: absolute;
-            left: -3rem;
-            top: 2rem;
-            width: 20px;
-            height: 20px;
-            background: var(--accent-color);
-            border: 4px solid var(--primary-color);
+            inset: -2px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.1), 
+                rgba(255, 255, 255, 0.3), 
+                rgba(255, 255, 255, 0.1)
+            );
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        .member-avatar {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            z-index: 1;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: spinAvatar 10s linear infinite;
+        }
+
+        .member-role {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            animation: glowText 2s infinite;
+        }
+
+        /* Animations améliorées */
+        @keyframes floatCard {
+            0%, 100% { transform: translateZ(0) rotateX(0) rotateY(0); }
+            25% { transform: translateZ(30px) rotateX(3deg) rotateY(-3deg); }
+            50% { transform: translateZ(0) rotateX(0) rotateY(0); }
+            75% { transform: translateZ(30px) rotateX(-3deg) rotateY(3deg); }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% { transform: translateZ(50px) scale(1); }
+            50% { transform: translateZ(100px) scale(1.05); filter: brightness(1.2); }
+        }
+
+        @keyframes spinAvatar {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg) scale(1.2); filter: brightness(1.2); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hover effects enrichis */
+        .news-item:hover {
+            transform: translateY(-20px) rotateX(10deg) scale(1.03);
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.2)
+            );
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.2),
+                inset 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+
+        .news-item:hover::before {
+            opacity: 1;
+        }
+
+        .news-item:hover .team-badge {
+            transform: translateZ(100px) translateX(20px);
+            background: #38A89D;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.2),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive amélioré */
+        @media (max-width: 768px) {
+            .news-grid {
+                padding: 1.5rem 1.5rem 1.5rem 5rem;
+            }
+
+            .news-grid::before {
+                left: 2.5rem;
+            }
+
+            .news-item::before {
+                left: -3rem;
+                top: 2.5rem;
+            }
+
+            .news-item::after {
+                left: -2rem;
+                width: 2rem;
+            }
+
+            .news-date {
+                position: absolute;
+                left: -12.5rem;
+                top: 2rem;
+                padding: 0.5rem;
+                min-width: auto;
+                writing-mode: horizontal-tb;
+                transform: none;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
         }
 
         .news-img {
@@ -705,20 +984,12 @@
             object-fit: cover;
         }
 
-        .news-date {
-            position: absolute;
-            left: -5.5rem;
-            top: 2rem;
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-
         .news-content {
             padding: 1.5rem;
         }
 
         .news-content h5 {
-            color: var(--accent-color);
+            color: #5550cc;
             margin-bottom: 1rem;
             font-size: 1.2rem;
         }
@@ -1847,7 +2118,6 @@
             color: white;
             text-decoration: none;
             transition: all 0.3s ease;
-            display: inline-block;
         }
 
         .footer-section a:hover {
@@ -2498,51 +2768,78 @@
             <div class="container">
                 <h2 class="section-title">Développement du Projet 📢</h2>
                 <div class="news-grid">
-                    <!-- Février 2025 -->
-                    <div class="news-item" onclick="showSlider(0)">
-                        <img src="images/final-version.png" alt="Version Finale" class="news-img">
-                        <div class="news-date">15/02/2025</div>
+                    <!-- Février 2025 - Déploiement Final -->
+                    <div class="news-item">
+                        <div class="news-date">01/02/2025</div>
                         <div class="news-content">
-                            <h5>Version 1.0.0 déployée sur la borne MMI 🎮</h5>
+                            <div class="news-header">
+                                <h5>Déploiement Final sur Borne Arcade 🎮</h5>
+                                <div class="team-badge">
+                                    <img src="images/MOI.jpg" alt="Mouad" class="member-avatar">
+                                    <span class="member-role">Project Manager</span>
+                                </div>
+                            </div>
                             <ul>
-                                <li>Déploiement final sur la borne d'arcade</li>
-                                <li>Tous les personnages sont jouables</li>
-                                <li>Mode 1v1 pleinement fonctionnel</li>
-                                <li>Correction des derniers bugs de combat</li>
+                                <li>Validation finale du projet</li>
+                                <li>Présentation à l'équipe pédagogique</li>
+                                <li>Installation sur la borne MMI</li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Slider Version Finale -->
-                    <div class="news-slider" id="slider-0">
-                        <div class="carousel">
-                            <button class="prev" onclick="prevSlide(0)">&#10094;</button>
-                            <div class="carousel-slides" id="carousel-slides-0">
-                                <div class="carousel-item">
-                                    <img src="images/Chama.png" alt="Chama" class="carousel-img">
-                                </div>
-                                <div class="carousel-item">
-                                    <img src="images/Metal.png" alt="Metal" class="carousel-img">
-                                </div>
-                                <div class="carousel-item">
-                                    <img src="images/Raijjin.png" alt="Raijjin" class="carousel-img">
+                    <!-- Janvier 2025 - Semaine 4 -->
+                    <div class="news-item">
+                        <div class="news-date">25/01/2025</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <h5>Tests et Optimisations Finales ⚡</h5>
+                                <div class="team-badge">
+                                    <img src="images/adem.png" alt="Adem" class="member-avatar">
+                                    <span class="member-role">Network Developer</span>
                                 </div>
                             </div>
-                            <button class="next" onclick="nextSlide(0)">&#10095;</button>
+                            <ul>
+                                <li>Optimisation du netcode</li>
+                                <li>Tests de performance réseau</li>
+                                <li>Correction des bugs de synchronisation</li>
+                            </ul>
                         </div>
                     </div>
 
-                    <!-- Janvier 2025 -->
-                    <div class="news-item" onclick="showSlider(1)">
-                        <img src="images/combat-system.jpg" alt="Système de Combat" class="news-img">
-                        <div class="news-date">20/01/2025</div>
+                    <!-- Janvier 2025 - Semaine 3 -->
+                    <div class="news-item">
+                        <div class="news-date">18/01/2025</div>
                         <div class="news-content">
-                            <h5>Finalisation du système de combat ⚔️</h5>
+                            <div class="news-header">
+                                <h5>Polish Visuel et Audio 🎨</h5>
+                                <div class="team-badge">
+                                    <img src="images/othmane.jpeg" alt="Othmane" class="member-avatar">
+                                    <span class="member-role">Art Director</span>
+                                </div>
+                            </div>
                             <ul>
-                                <li>Équilibrage final des personnages</li>
-                                <li>Optimisation des hitboxes</li>
-                                <li>Ajout des effets sonores de combat</li>
-                                <li>Intégration des combos spéciaux</li>
+                                <li>Finalisation des effets visuels</li>
+                                <li>Ajustement des animations</li>
+                                <li>Mixage audio final</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Janvier 2025 - Semaine 2 -->
+                    <div class="news-item">
+                        <div class="news-date">11/01/2025</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <h5>Équilibrage du Gameplay 🎯</h5>
+                                <div class="team-badge">
+                                    <img src="images/MOI.jpg" alt="Mouad" class="member-avatar">
+                                    <span class="member-role">Game Designer</span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>Ajustement des personnages (Wolf, Fox, Mario)</li>
+                                <li>Tests de gameplay intensifs</li>
+                                <li>Feedback des joueurs test</li>
                             </ul>
                         </div>
                     </div>
@@ -2551,40 +2848,55 @@
                     <div class="news-item">
                         <div class="news-date">15/12/2024</div>
                         <div class="news-content">
-                            <h5>Amélioration du Gameplay 🎯</h5>
+                            <div class="news-header">
+                                <h5>Système de Combat 🥊</h5>
+                                <div class="team-badge">
+                                    <img src="images/adem.png" alt="Adem" class="member-avatar">
+                                    <span class="member-role">Combat System Dev</span>
+                                </div>
+                            </div>
                             <ul>
-                                <li>Ajustement de la vitesse des personnages</li>
-                                <li>Amélioration des animations de combat</li>
-                                <li>Optimisation des collisions</li>
-                                <li>Tests et corrections des bugs majeurs</li>
+                                <li>Implémentation des combos</li>
+                                <li>Système de hitbox</li>
+                                <li>Mécanique de combat</li>
                             </ul>
                         </div>
                     </div>
 
                     <!-- Novembre 2024 -->
                     <div class="news-item">
-                        <div class="news-date">15/11/2024</div>
+                        <div class="news-date">20/11/2024</div>
                         <div class="news-content">
-                            <h5>Interface et Assets 🎨</h5>
+                            <div class="news-header">
+                                <h5>Interface Utilisateur 🎨</h5>
+                                <div class="team-badge">
+                                    <img src="images/othmane.jpeg" alt="Othmane" class="member-avatar">
+                                    <span class="member-role">UI/UX Designer</span>
+                                </div>
+                            </div>
                             <ul>
-                                <li>Création des miniatures des personnages</li>
-                                <li>Finalisation du style visuel du jeu</li>
-                                <li>Amélioration du HUD en combat</li>
-                                <li>Intégration des effets visuels de feedback</li>
+                                <li>Design du menu principal</li>
+                                <li>HUD en combat</li>
+                                <li>Animations d'interface</li>
                             </ul>
                         </div>
                     </div>
 
                     <!-- Octobre 2024 -->
                     <div class="news-item">
-                        <div class="news-date">20/10/2024</div>
+                        <div class="news-date">15/10/2024</div>
                         <div class="news-content">
-                            <h5>Développement du Mode Combat 🥊</h5>
+                            <div class="news-header">
+                                <h5>Core Gameplay 🎮</h5>
+                                <div class="team-badge">
+                                    <img src="images/adem.png" alt="Adem" class="member-avatar">
+                                    <span class="member-role">Core Developer</span>
+                                </div>
+                            </div>
                             <ul>
-                                <li>Implémentation du système de vie</li>
-                                <li>Création du terrain de combat</li>
-                                <li>Ajout du système de timer</li>
-                                <li>Développement des mouvements de base</li>
+                                <li>Système de mouvements</li>
+                                <li>Physique des personnages</li>
+                                <li>Système de collision</li>
                             </ul>
                         </div>
                     </div>
@@ -2593,12 +2905,17 @@
                     <div class="news-item">
                         <div class="news-date">20/09/2024</div>
                         <div class="news-content">
-                            <h5>Début du développement 🚀</h5>
+                            <div class="news-header">
+                                <h5>Lancement du Projet 🚀</h5>
+                                <div class="team-badge">
+                                    <img src="images/MOI.jpg" alt="Mouad" class="member-avatar">
+                                    <span class="member-role">Project Lead</span>
+                                </div>
+                            </div>
                             <ul>
-                                <li>Conception des premiers personnages</li>
-                                <li>Création des animations de base</li>
-                                <li>Mise en place de l'architecture du jeu</li>
-                                <li>Configuration initiale de Unity</li>
+                                <li>Définition du concept</li>
+                                <li>Planning du projet</li>
+                                <li>Setup de l'environnement Unity</li>
                             </ul>
                         </div>
                     </div>
